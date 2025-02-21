@@ -10,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('asset/fontawesome/css/all.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.css') }}" />
     <!-- Data Tables -->
     <link href="{{ asset('css/datatables.min.css') }}" rel="stylesheet">
 </head>
