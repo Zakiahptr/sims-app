@@ -14,7 +14,10 @@
         @foreach ($products as $index => $product)
         <tr>
             <td>{{ $index + 1 }}</td>
-            <td><img src="storage/{{ $product->image}}" alt="" height="50" width="50"></td>
+            <td>
+                <img src="{{ $product->image}}" alt="" height="50" width="50">
+                {{-- {{ $product->image }} --}}
+            </td>
             <td>{{ $product->product_name }}</td>
             <td>{{ $product->category->category_name }}</td>
             <td>{{ number_format($product->purchase_price, 0, ',', ',') }}</td>

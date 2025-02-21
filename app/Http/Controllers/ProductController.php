@@ -39,28 +39,53 @@ class ProductController extends Controller
     {
 
         $data = $request->validated();
+
+        //jika menggunakan storagelink
         // $data['selling_price'] = $data['purchase_price'] + ($data['purchase_price'] * 0.3);
+
+        // if ($request->hasFile('image')) {
+        //     $file = $request->file('image');
+
+        //     $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+        //     $extension = $file->getClientOriginalExtension();
+
+        //     $folder = 'uploads';
+
+        //     $filenameToStore = $filename . '.' . $extension;
+
+        //     $counter = 1;
+        //     while (Storage::exists($folder . '/' . $filenameToStore)) {
+        //         $filenameToStore = $filename . ' (' . $counter . ').' . $extension;
+        //         $counter++;
+        //     }
+
+        //     $image = $file->storeAs($folder, $filenameToStore);
+        //     $data['image'] = $image;
+        //    }
+
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-
             $extension = $file->getClientOriginalExtension();
 
             $folder = 'uploads';
-
             $filenameToStore = $filename . '.' . $extension;
 
+
             $counter = 1;
-            while (Storage::exists($folder . '/' . $filenameToStore)) {
+            while (file_exists(public_path($folder . '/' . $filenameToStore))) {
                 $filenameToStore = $filename . ' (' . $counter . ').' . $extension;
                 $counter++;
             }
 
-            $image = $file->storeAs($folder, $filenameToStore);
-            $data['image'] = $image;
-           }
+
+            $file->move(public_path($folder), $filenameToStore);
+
+            $data['image'] = $folder . '/' . $filenameToStore;
+        }
 
 
         Product::create($data);
@@ -93,27 +118,52 @@ class ProductController extends Controller
     {
         $data = $request->validated();
         $data['selling_price'] = $data['purchase_price'] + ($data['purchase_price'] * 0.3);
+        // if ($request->hasFile('image')) {
+
+        //     if ($product->image && Storage::exists($product->image)) {
+        //         Storage::delete($product->image);
+        //     }
+
+        //     $file = $request->file('image');
+        //     $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        //     $extension = $file->getClientOriginalExtension();
+        //     $folder = 'uploads/image';
+        //     $filenameToStore = $filename . '.' . $extension;
+
+        //     $counter = 1;
+        //     while (Storage::exists($folder . '/' . $filenameToStore)) {
+        //         $filenameToStore = $filename . ' (' . $counter . ').' . $extension;
+        //         $counter++;
+        //     }
+
+        //     // Simpan file baru dengan nama yang unik
+        //     $image = $file->storeAs($folder, $filenameToStore);
+        //     $data['image'] = $image;
+        // }
+
         if ($request->hasFile('image')) {
 
-            if ($product->image && Storage::exists($product->image)) {
-                Storage::delete($product->image);
+            if ($product->image && file_exists(public_path($product->image))) {
+                unlink(public_path($product->image));
             }
 
             $file = $request->file('image');
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $file->getClientOriginalExtension();
-            $folder = 'uploads/image';
+            $folder = 'uploads';
             $filenameToStore = $filename . '.' . $extension;
 
+
             $counter = 1;
-            while (Storage::exists($folder . '/' . $filenameToStore)) {
+            while (file_exists(public_path($folder . '/' . $filenameToStore))) {
                 $filenameToStore = $filename . ' (' . $counter . ').' . $extension;
                 $counter++;
             }
 
-            // Simpan file baru dengan nama yang unik
-            $image = $file->storeAs($folder, $filenameToStore);
-            $data['image'] = $image;
+
+            $file->move(public_path($folder), $filenameToStore);
+
+            $data['image'] = $folder . '/' . $filenameToStore;
         }
 
         $product->update($data);
@@ -127,7 +177,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        Storage::delete($product->image);
+        // Storage::delete($product->image);
+
+        if ($product->image && file_exists(public_path($product->image))) {
+            unlink(public_path($product->image));
+        }
         $product->delete();
 
         return redirect()->route('product.index')->with('status', 'Data produk berhasil dihapus!');
