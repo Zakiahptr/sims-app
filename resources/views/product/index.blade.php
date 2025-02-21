@@ -48,7 +48,7 @@
                 <td>{{$loop->iteration}}</td>
                 <td>
                     {{-- <img width="10px" src="{{ $product->image() }}"> --}}
-                    <img src="{{ route('image.view', ['filename' => $product->image]) }}" alt="Gambar Produk">
+                    <img src="{{ route('image.view', ['filename' => basename($product->image)]) }}" alt="Gambar Produk">
                 </td>
                 <td>{{ $product->product_name }}</td>
                 <td>{{ $product->category->category_name }}</td>

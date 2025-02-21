@@ -94,6 +94,8 @@ class ProductController extends Controller
             $extension = $file->getClientOriginalExtension();
             $folder = 'uploads';
 
+            $filename = str_replace(' ', '_', $filename);
+
             $filenameToStore = $filename . '.' . $extension;
             $counter = 1;
 
@@ -176,6 +178,7 @@ class ProductController extends Controller
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $file->getClientOriginalExtension();
             $folder = 'uploads';
+            $filename = str_replace(' ', '_', $filename);
             $filenameToStore = $filename . '.' . $extension;
 
 
