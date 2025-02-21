@@ -3,6 +3,7 @@
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -40,6 +41,11 @@ Route::controller(ProductController::class)->name('product.')->group(function ()
 });
 
 Route::get('/profil', [ProfileController::class, 'index'])->name('profile');
+});
+
+Route::get('/run-storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage link created!';
 });
 
 Route::get('/storage/uploads/{filename}', function ($filename) {
