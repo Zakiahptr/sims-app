@@ -65,26 +65,47 @@ class ProductController extends Controller
         //    }
 
 
+        // if ($request->hasFile('image')) {
+        //     $file = $request->file('image');
+
+        //     $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        //     $extension = $file->getClientOriginalExtension();
+
+        //     $folder = 'uploads';
+        //     $filenameToStore = $filename . '.' . $extension;
+
+
+        //     $counter = 1;
+        //     while (file_exists(public_path($folder . '/' . $filenameToStore))) {
+        //         $filenameToStore = $filename . ' (' . $counter . ').' . $extension;
+        //         $counter++;
+        //     }
+
+
+        //     $file->move(public_path($folder), $filenameToStore);
+
+        //     $data['image'] = $folder . '/' . $filenameToStore;
+        // }
+
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $file->getClientOriginalExtension();
-
             $folder = 'uploads';
+
             $filenameToStore = $filename . '.' . $extension;
-
-
             $counter = 1;
-            while (file_exists(public_path($folder . '/' . $filenameToStore))) {
-                $filenameToStore = $filename . ' (' . $counter . ').' . $extension;
+
+
+            while (Storage::exists("public/{$folder}/{$filenameToStore}")) {
+                $filenameToStore = $filename . " ({$counter}).{$extension}";
                 $counter++;
             }
 
+            $path = $file->storeAs("public/{$folder}", $filenameToStore);
 
-            $file->move(public_path($folder), $filenameToStore);
-
-            $data['image'] = $folder . '/' . $filenameToStore;
+            $data['image'] = "{$folder}/{$filenameToStore}";
         }
 
 
@@ -143,8 +164,12 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
 
-            if ($product->image && file_exists(public_path($product->image))) {
-                unlink(public_path($product->image));
+            // if ($product->image && file_exists(public_path($product->image))) {
+            //     unlink(public_path($product->image));
+            // }
+
+            if ($product->image && Storage::exists("public/{$product->image}")) {
+                Storage::delete("public/{$product->image}");
             }
 
             $file = $request->file('image');
@@ -161,9 +186,14 @@ class ProductController extends Controller
             }
 
 
-            $file->move(public_path($folder), $filenameToStore);
+            // $file->move(public_path($folder), $filenameToStore);
 
-            $data['image'] = $folder . '/' . $filenameToStore;
+            // $data['image'] = $folder . '/' . $filenameToStore;
+
+
+            $path = $file->storeAs("public/{$folder}", $filenameToStore);
+
+            $data['image'] = "{$folder}/{$filenameToStore}";
         }
 
         $product->update($data);
@@ -179,8 +209,12 @@ class ProductController extends Controller
     {
         // Storage::delete($product->image);
 
-        if ($product->image && file_exists(public_path($product->image))) {
-            unlink(public_path($product->image));
+        // if ($product->image && file_exists(public_path($product->image))) {
+        //     unlink(public_path($product->image));
+        // }
+
+        if ($product->image && Storage::exists("public/{$product->image}")) {
+            Storage::delete("public/{$product->image}");
         }
         $product->delete();
 
@@ -191,7 +225,6 @@ class ProductController extends Controller
     {
         $category = $request->query('category', 'Semua');
 
-        // Ambil produk berdasarkan kategori
         $products = Product::query();
 
         if ($category !== 'Semua') {

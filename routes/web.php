@@ -42,3 +42,10 @@ Route::controller(ProductController::class)->name('product.')->group(function ()
 Route::get('/profil', [ProfileController::class, 'index'])->name('profile');
 });
 
+Route::get('/storage/uploads/{filename}', function ($filename) {
+    $path = storage_path("app/public/uploads/{$filename}");
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path);
+})->name('image.view');
