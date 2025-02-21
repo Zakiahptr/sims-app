@@ -21,15 +21,12 @@ use App\Http\Controllers\ProfileController;
 
 
 
-Route::get('/login2', function () {
-    return view('auth.login2');
-});
-
 Auth::routes();
 
 // Route::get('/',  [HomeController::class, 'index'])->name('home');
 // Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+Route::middleware(['auth'])->group(function () {
 Route::controller(ProductController::class)->name('product.')->group(function () {
     Route::get('/', 'index')->name('index');
     Route::get('produk/tambah', 'create')->name('create');
@@ -43,3 +40,5 @@ Route::controller(ProductController::class)->name('product.')->group(function ()
 });
 
 Route::get('/profil', [ProfileController::class, 'index'])->name('profile');
+});
+
